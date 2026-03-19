@@ -1,0 +1,24 @@
+{
+  "name": "ai-resume-analyzer-ai",
+  "version": "1.0.0",
+  "description": "A project with ai integration",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "ai"
+  ],
+  "author": "Khant Parekh",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.0",
+    "nodemon": "^3.1.14"
+  }
+}
