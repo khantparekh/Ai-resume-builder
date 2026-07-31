@@ -25,14 +25,14 @@ const interviewReportSchema = z.object({
         severity: z.enum(['low', 'medium','high']).describe("The severity of this skill gap, i.e. how important is this skill for the job and how much it can impact the candidate's chances"),
     })).describe("List of skill gaps in the candidate's profile along with their severity"),
 
-    preparationPlans: z.array(z.object({
+    preparationPlan: z.array(z.object({
         day: z.number().describe("The day number in the preparation plan, starting from 1"),
         focus: z.string().describe("The main focus of this day in the preparation plan, e.g. data structures, system design, mock interviews etc."),
         tasks: z.array(z.string().describe("A task to be done on this day to follow the preparation plan, e.g. read a specific book or article, solve a set of problems, watch a video etc.")).describe("List of tasks to be done on this day to follow the preparation plan, e.g. read a specific book or article, solve a set of problems, watch a video etc.")
     })).describe("A day-wise preparation plan for the candidate to follow in order to prepare for the interview effectively"),
 });
 
-async function generateInterviewReport({jobDescription, resume, selfDescription}) {
+async function generateInterviewReport({resume, selfDescription, jobDescription}) {
     const prompt = `Generate an interview report for a candidate with the following details:
                         Resume: ${resume}
                         Self Description: ${selfDescription}
