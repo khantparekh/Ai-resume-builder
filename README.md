@@ -1,4 +1,5 @@
 <div align="center">
+
 # CareerCompat AI
  
 **Match your resume to any job, optimize it for ATS, and practice interviews with AI.**
