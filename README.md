@@ -167,7 +167,6 @@ GEMINI_API_KEY=your_google_gemini_api_key
 - [x] Text-to-Speech question playback
 - [ ] Speech-to-Text voice answers
 - [ ] PDF export of the optimized resume
-- [ ] Interview history and progress tracking
 ---
  
 ## Author
