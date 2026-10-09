@@ -24,7 +24,7 @@
 3. **AI Mock Interview Simulator**
    - Generates 6 tailored questions: 2 Technical, 2 Resume-based, and 2 Behavioral (STAR method).
    - Text-to-Speech audio question playback.
-   - Speech-to-Text voice recognition for hands-free answering.
+   - Speech-to-Text voice recognition for hands-free answering.(In progress)
    - Instant performance evaluation with overall score, category breakdown (Technical, Communication, Behavioral), hiring verdict badge, and exemplar model answers.
 
 ---

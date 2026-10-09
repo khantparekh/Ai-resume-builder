@@ -23,7 +23,7 @@ const Navbar = () => {
         <header className="navbar-container">
             <div className="navbar-inner">
                 {/* Brand Logo */}
-                <Link to="/" className="navbar-brand">
+                <Link to="/dashboard" className="navbar-brand">
                     <div className="brand-logo-badge">
                         <span className="material-symbols-outlined filled">insights</span>
                     </div>
@@ -36,8 +36,8 @@ const Navbar = () => {
                 {/* Main Navigation Links */}
                 <nav className="navbar-nav">
                     <Link
-                        to="/"
-                        className={`nav-item ${isActive('/') ? 'active' : ''}`}
+                        to="/dashboard"
+                        className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}
                     >
                         <span className="material-symbols-outlined">dashboard</span>
                         <span>Dashboard</span>

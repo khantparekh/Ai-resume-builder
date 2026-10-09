@@ -22,7 +22,7 @@ const Login = () => {
         setSubmitting(true);
         try {
             await handleLogin({ email, password });
-            navigate('/');
+            navigate('/dashboard');
         } catch (err) {
             setErrorMsg(err?.response?.data?.message || "Invalid credentials. Please try again.");
         } finally {
