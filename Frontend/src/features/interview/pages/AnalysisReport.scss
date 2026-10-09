@@ -1,0 +1,294 @@
+.analysis-report-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+
+  .report-top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--on-surface-variant);
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--primary);
+      }
+    }
+
+    .top-action-pills {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+  }
+
+  /* Hero Card */
+  .report-hero {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
+    background: #ffffff;
+
+    .hero-score-column {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-content-column {
+      flex: 1;
+
+      .role-heading-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.5rem;
+
+        h1 {
+          font-size: 1.65rem;
+          color: var(--primary);
+        }
+      }
+
+      .hero-summary-text {
+        font-size: 0.95rem;
+        color: var(--on-surface-variant);
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        max-width: 750px;
+      }
+
+      .hero-pill-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+    }
+  }
+
+  /* Main Grid */
+  .report-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.75rem;
+    align-items: start;
+
+    .report-left-col {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .report-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .section-title-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          .icon-teal {
+            color: var(--secondary);
+          }
+
+          h2 {
+            font-size: 1.25rem;
+            color: var(--primary);
+          }
+        }
+
+        .section-desc {
+          font-size: 0.85rem;
+          color: var(--on-surface-variant);
+          margin-bottom: 0.25rem;
+        }
+
+        .empty-text {
+          font-size: 0.9rem;
+          color: var(--secondary);
+          font-weight: 500;
+        }
+      }
+    }
+
+    /* Right Sticky Roadmap */
+    .report-right-col {
+      .prep-roadmap-sticky {
+        position: sticky;
+        top: 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+
+        .section-title-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+
+          .icon-teal {
+            color: var(--secondary);
+          }
+
+          h3 {
+            font-size: 1.15rem;
+            color: var(--primary);
+          }
+        }
+
+        .section-desc {
+          font-size: 0.8rem;
+          color: var(--on-surface-variant);
+        }
+
+        .prep-days-timeline {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+          .prep-day-block {
+            background-color: var(--surface-container-low);
+            border-radius: var(--radius-md);
+            padding: 0.85rem;
+            border: 1px solid var(--outline-variant);
+
+            .day-badge-header {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+
+              .day-number {
+                background-color: var(--primary);
+                color: #ffffff;
+                font-family: var(--font-data);
+                font-size: 0.7rem;
+                font-weight: 700;
+                padding: 0.15rem 0.45rem;
+                border-radius: var(--radius-sm);
+                text-transform: uppercase;
+              }
+
+              .day-focus {
+                font-size: 0.85rem;
+                font-weight: 700;
+                color: var(--primary);
+              }
+            }
+
+            .day-tasks-list {
+              list-style: none;
+              display: flex;
+              flex-direction: column;
+              gap: 0.4rem;
+
+              .day-task-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.45rem;
+                font-size: 0.8rem;
+                color: var(--on-surface);
+                line-height: 1.35;
+                cursor: pointer;
+                user-select: none;
+                transition: color 0.15s;
+
+                .task-check-icon {
+                  font-size: 16px;
+                  color: var(--outline);
+                  margin-top: 2px;
+                  flex-shrink: 0;
+                }
+
+                &:hover {
+                  color: var(--secondary);
+                }
+
+                &.completed {
+                  text-decoration: line-through;
+                  color: var(--outline);
+
+                  .task-check-icon {
+                    color: var(--secondary);
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .prep-sidebar-footer {
+          margin-top: 0.5rem;
+          padding-top: 0.85rem;
+          border-top: 1px solid var(--outline-variant);
+
+          .w-full {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+
+  .report-loading, .report-error {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--on-surface-variant);
+
+    .icon-spin {
+      font-size: 40px;
+      color: var(--secondary);
+    }
+  }
+}
+
+@media (max-width: 960px) {
+  .analysis-report-page {
+    .report-hero {
+      flex-direction: column;
+      text-align: center;
+
+      .hero-content-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .role-heading-row {
+          justify-content: center;
+        }
+
+        .hero-pill-tags {
+          justify-content: center;
+        }
+      }
+    }
+
+    .report-main-grid {
+      grid-template-columns: 1fr;
+
+      .report-right-col .prep-roadmap-sticky {
+        position: static;
+        max-height: none;
+      }
+    }
+  }
+}
