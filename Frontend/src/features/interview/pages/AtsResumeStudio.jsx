@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router';
 import { getReports, getReportById } from '../services/interview.api.js';
+import { useAuth } from '../../auth/hooks/useAuth.js';
 import ScoreRing from '../components/ScoreRing.jsx';
+import ResumeExportStudio from '../components/ResumeExportStudio.jsx';
 import './AtsResumeStudio.scss';
 
 const AtsResumeStudio = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    const { user } = useAuth();
     const reportIdParam = searchParams.get('reportId');
+    const tabParam = searchParams.get('tab');
 
     const [reportsList, setReportsList] = useState([]);
     const [activeReportId, setActiveReportId] = useState(reportIdParam || '');
     const [report, setReport] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState('keywords'); // 'keywords' | 'bullets' | 'summary' | 'skills' | 'draft'
+    const [activeTab, setActiveTab] = useState(tabParam || 'export'); // 'export' | 'keywords' | 'bullets' | 'summary' | 'skills' | 'draft'
     const [copySuccess, setCopySuccess] = useState('');
 
     // Fetch user's reports list
@@ -85,27 +89,43 @@ const AtsResumeStudio = () => {
                     <p>Tailor your resume with high-impact keywords, STAR metric rewrites, and ATS-compliant formatting.</p>
                 </div>
 
-                {reportsList.length > 0 && (
-                    <div className="report-selector-wrapper">
-                        <label>Select Target Role Scan:</label>
-                        <select
-                            value={activeReportId}
-                            onChange={(e) => handleSelectReport(e.target.value)}
-                            className="report-select-input"
+                <div className="top-bar-controls">
+                    {reportsList.length > 0 && (
+                        <div className="report-selector-wrapper">
+                            <label>Select Target Role Scan:</label>
+                            <select
+                                value={activeReportId}
+                                onChange={(e) => handleSelectReport(e.target.value)}
+                                className="report-select-input"
+                            >
+                                {reportsList.map((r) => (
+                                    <option key={r._id} value={r._id}>
+                                        {r.roleTitle || "Target Role"} ({r.matchScore}% Match)
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
+
+                    {report && atsData && (
+                        <button
+                            type="button"
+                            className="btn-one-button-export-top"
+                            onClick={() => setActiveTab('export')}
+                            title="Export resume in ATS Standard, Executive, or Original enhanced layout"
                         >
-                            {reportsList.map((r) => (
-                                <option key={r._id} value={r._id}>
-                                    {r.roleTitle || "Target Role"} ({r.matchScore}% Match)
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                )}
+                            <span className="material-symbols-outlined">picture_as_pdf</span>
+                            <span>One-Button Export Resume</span>
+                        </button>
+                    )}
+                </div>
             </div>
 
             {loading ? (
                 <div className="ats-loading-state card">
-                    <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                    <div className="loading-flow-wrapper">
+                        <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                    </div>
                     <h3>Loading ATS Recommendations...</h3>
                 </div>
             ) : !report ? (
@@ -183,6 +203,14 @@ const AtsResumeStudio = () => {
                     {/* Studio Navigation Tabs */}
                     <div className="studio-tabs card">
                         <button
+                            className={`studio-tab-btn tab-export-highlight ${activeTab === 'export' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('export')}
+                        >
+                            <span className="material-symbols-outlined">picture_as_pdf</span>
+                            <span>One-Button Export Resume</span>
+                        </button>
+
+                        <button
                             className={`studio-tab-btn ${activeTab === 'keywords' ? 'active' : ''}`}
                             onClick={() => setActiveTab('keywords')}
                         >
@@ -222,6 +250,17 @@ const AtsResumeStudio = () => {
                             <span>Full ATS Resume Draft</span>
                         </button>
                     </div>
+
+                    {/* Tab 0: Complete One-Button Export Resume Studio */}
+                    {activeTab === 'export' && (
+                        <div className="tab-content-panel animate-fade-in">
+                            <ResumeExportStudio
+                                report={report}
+                                atsData={atsData}
+                                user={user}
+                            />
+                        </div>
+                    )}
 
                     {/* Tab 1: Missing & Matched Keywords */}
                     {activeTab === 'keywords' && (
@@ -407,6 +446,13 @@ const AtsResumeStudio = () => {
                                     <p>Full ready-to-use resume markdown that incorporates all recommendations, ready to copy or download.</p>
                                 </div>
                                 <div className="draft-action-buttons">
+                                    <button
+                                        className="btn btn-primary btn-sm"
+                                        onClick={() => setActiveTab('export')}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>picture_as_pdf</span>
+                                        <span>One-Button Export PDF</span>
+                                    </button>
                                     <button
                                         className="btn btn-outline btn-sm"
                                         onClick={() => handleCopy(atsData.optimizedResumeMarkdown, "entire resume markdown")}

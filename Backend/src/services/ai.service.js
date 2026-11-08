@@ -248,8 +248,48 @@ ${formattedQandA}
     );
 }
 
+/**
+ * Transcribe candidate voice recording using Gemini Multimodal Audio
+ */
+async function transcribeCandidateAudio({ audioBase64, mimeType = 'audio/webm' }) {
+    if (!audioBase64) return "";
+
+    for (const model of CANDIDATE_MODELS) {
+        try {
+            const response = await ai.models.generateContent({
+                model,
+                contents: [
+                    {
+                        role: 'user',
+                        parts: [
+                            {
+                                inlineData: {
+                                    mimeType,
+                                    data: audioBase64
+                                }
+                            },
+                            {
+                                text: 'Transcribe the spoken words in this audio accurately. Return only the transcribed plain text without commentary, quotes, timestamps, or markdown formatting.'
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            if (response && response.text) {
+                return response.text.trim();
+            }
+        } catch (err) {
+            console.warn(`[Transcription] Model ${model} failed: ${err.message}. Trying next fallback...`);
+        }
+    }
+
+    return "";
+}
+
 export {
     generateInterviewReport,
     generateMockInterviewQuestions,
     evaluateInterviewPerformance,
+    transcribeCandidateAudio
 };

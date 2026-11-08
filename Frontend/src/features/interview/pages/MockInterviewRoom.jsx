@@ -5,7 +5,8 @@ import {
     startMockInterview,
     getMockSession,
     saveMockProgress,
-    evaluateMockInterview
+    evaluateMockInterview,
+    transcribeVoiceApi
 } from '../services/interview.api.js';
 import ScoreRing from '../components/ScoreRing.jsx';
 import './MockInterviewRoom.scss';
@@ -35,7 +36,31 @@ const MockInterviewRoom = () => {
     // Audio & Speech states
     const [isSpeakingQuestion, setIsSpeakingQuestion] = useState(false);
     const [isListeningMic, setIsListeningMic] = useState(false);
+    const [isTranscribingAudio, setIsTranscribingAudio] = useState(false);
+    const [interimTranscript, setInterimTranscript] = useState('');
+    const [micErrorMessage, setMicErrorMessage] = useState('');
     const recognitionRef = useRef(null);
+    const isListeningMicRef = useRef(false);
+    const interimTranscriptRef = useRef('');
+    const activeQIdRef = useRef(null);
+    const mediaStreamRef = useRef(null);
+    const mediaRecorderRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    const speechCapturedRef = useRef('');
+
+    // Helper: Convert audio blob to base64
+    const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const result = reader.result;
+                const base64 = result && result.includes(',') ? result.split(',')[1] : result;
+                resolve(base64);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    };
 
     // 1. Initial Data Loading: Reports list or existing session
     useEffect(() => {
@@ -167,58 +192,233 @@ const MockInterviewRoom = () => {
         window.speechSynthesis.speak(utterance);
     };
 
-    // 6. Speech Recognition (Speech to Text microphone input)
-    const handleToggleMic = () => {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Voice speech recognition is not supported in this browser. Please use Chrome or Edge, or type your answer.");
-            return;
+    // Keep active question ID in sync with current question
+    useEffect(() => {
+        const currentQ = session?.questions?.[currentIndex];
+        if (currentQ) {
+            activeQIdRef.current = currentQ.id;
         }
+    }, [currentIndex, session]);
 
-        if (isListeningMic) {
-            recognitionRef.current?.stop();
-            setIsListeningMic(false);
-            return;
-        }
-
-        const currentQ = session?.questions[currentIndex];
-        if (!currentQ) return;
-
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        recognition.onstart = () => {
-            setIsListeningMic(true);
-        };
-
-        recognition.onresult = (event) => {
-            let finalTranscript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript + ' ';
+    // Cleanup mic and synthesis on unmount
+    useEffect(() => {
+        return () => {
+            isListeningMicRef.current = false;
+            if (recognitionRef.current) {
+                try {
+                    recognitionRef.current.abort();
+                } catch (e) {
+                    console.log("Recognition cleanup note:", e);
                 }
             }
-            if (finalTranscript) {
-                setAnswers(prev => ({
-                    ...prev,
-                    [currentQ.id]: (prev[currentQ.id] ? prev[currentQ.id] + ' ' : '') + finalTranscript.trim()
-                }));
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
             }
         };
+    }, []);
 
-        recognition.onerror = (err) => {
-            console.error("Mic error:", err);
+    // 6. Speech Recognition & Resilient Voice Transcription
+    const handleToggleMic = async () => {
+        // If currently listening, stop both recorder and speech recognition
+        if (isListeningMic) {
+            isListeningMicRef.current = false;
             setIsListeningMic(false);
-        };
 
-        recognition.onend = () => {
-            setIsListeningMic(false);
-        };
+            if (recognitionRef.current) {
+                try {
+                    recognitionRef.current.stop();
+                } catch (e) {
+                    console.log("Stop mic note:", e);
+                }
+            }
 
-        recognitionRef.current = recognition;
-        recognition.start();
+            // Commit any lingering interim speech chunks
+            if (interimTranscriptRef.current && activeQIdRef.current) {
+                const pending = interimTranscriptRef.current.trim();
+                if (pending) {
+                    speechCapturedRef.current += (speechCapturedRef.current ? ' ' : '') + pending;
+                    setAnswers(prev => ({
+                        ...prev,
+                        [activeQIdRef.current]: (prev[activeQIdRef.current] ? prev[activeQIdRef.current].trim() + ' ' : '') + pending
+                    }));
+                }
+                interimTranscriptRef.current = '';
+                setInterimTranscript('');
+            }
+
+            // Stop MediaRecorder and perform AI fallback transcription if Web Speech was silent/blocked
+            const recorder = mediaRecorderRef.current;
+            if (recorder && recorder.state !== 'inactive') {
+                recorder.onstop = async () => {
+                    const audioChunks = audioChunksRef.current;
+                    const hadSpeechCaptured = Boolean(speechCapturedRef.current && speechCapturedRef.current.trim());
+
+                    if (!hadSpeechCaptured && audioChunks.length > 0) {
+                        setIsTranscribingAudio(true);
+                        try {
+                            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                            const base64Audio = await blobToBase64(audioBlob);
+                            const res = await transcribeVoiceApi({ audioBase64: base64Audio, mimeType: 'audio/webm' });
+                            if (res?.data?.transcript) {
+                                const transcript = res.data.transcript;
+                                const targetId = activeQIdRef.current;
+                                if (targetId && transcript) {
+                                    setAnswers(prev => ({
+                                        ...prev,
+                                        [targetId]: (prev[targetId] ? prev[targetId].trim() + ' ' : '') + transcript
+                                    }));
+                                }
+                                setMicErrorMessage('');
+                            }
+                        } catch (aiErr) {
+                            console.error("AI voice transcription fallback error:", aiErr);
+                            setMicErrorMessage("Could not transcribe voice audio. You can type your response directly.");
+                        } finally {
+                            setIsTranscribingAudio(false);
+                        }
+                    }
+
+                    // Release hardware audio tracks
+                    if (mediaStreamRef.current) {
+                        mediaStreamRef.current.getTracks().forEach(t => t.stop());
+                        mediaStreamRef.current = null;
+                    }
+                };
+
+                try {
+                    recorder.stop();
+                } catch (e) {
+                    console.log("Recorder stop note:", e);
+                }
+            } else {
+                if (mediaStreamRef.current) {
+                    mediaStreamRef.current.getTracks().forEach(t => t.stop());
+                    mediaStreamRef.current = null;
+                }
+            }
+            return;
+        }
+
+        // Request microphone access
+        let stream = null;
+        try {
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaStreamRef.current = stream;
+            }
+        } catch (permErr) {
+            console.warn("Microphone permission denied:", permErr);
+            setMicErrorMessage("Microphone access is blocked. Please allow microphone permissions in your browser's address bar (click the lock/tune icon) to speak your response.");
+            return;
+        }
+
+        setMicErrorMessage('');
+        const currentQ = session?.questions?.[currentIndex];
+        if (!currentQ) return;
+
+        activeQIdRef.current = currentQ.id;
+        isListeningMicRef.current = true;
+        setIsListeningMic(true);
+        setInterimTranscript('');
+        audioChunksRef.current = [];
+        speechCapturedRef.current = '';
+
+        // Start native audio buffer recorder for guaranteed fallback
+        if (stream && window.MediaRecorder) {
+            try {
+                const options = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                    ? { mimeType: 'audio/webm;codecs=opus' }
+                    : { mimeType: 'audio/webm' };
+                const mr = new MediaRecorder(stream, options);
+                mr.ondataavailable = (e) => {
+                    if (e.data && e.data.size > 0) {
+                        audioChunksRef.current.push(e.data);
+                    }
+                };
+                mr.start(250);
+                mediaRecorderRef.current = mr;
+            } catch (recorderErr) {
+                console.warn("MediaRecorder start notice:", recorderErr);
+            }
+        }
+
+        // Start Web Speech API in parallel
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            try {
+                const recognition = new SpeechRecognition();
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                recognition.lang = 'en-US';
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    setIsListeningMic(true);
+                    isListeningMicRef.current = true;
+                    setMicErrorMessage('');
+                };
+
+                recognition.onresult = (event) => {
+                    let interim = '';
+                    let finalChunk = '';
+
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        const transcript = event.results[i][0].transcript;
+                        if (event.results[i].isFinal) {
+                            finalChunk += transcript + ' ';
+                        } else {
+                            interim += transcript;
+                        }
+                    }
+
+                    interimTranscriptRef.current = interim;
+                    setInterimTranscript(interim);
+
+                    if (finalChunk.trim()) {
+                        speechCapturedRef.current += (speechCapturedRef.current ? ' ' : '') + finalChunk.trim();
+                        const targetId = activeQIdRef.current;
+                        if (targetId) {
+                            setAnswers(prev => ({
+                                ...prev,
+                                [targetId]: (prev[targetId] ? prev[targetId].trim() + ' ' : '') + finalChunk.trim()
+                            }));
+                        }
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.warn("Speech recognition notice:", event.error);
+                    if (event.error === 'no-speech') {
+                        return; // Natural pause, keep listening
+                    }
+                    if (event.error === 'network') {
+                        // Browser cloud speech server unavailable on localhost/network.
+                        // Seamlessly rely on MediaRecorder + AI transcription!
+                        console.log("Browser cloud speech endpoint restricted. Using high-fidelity AI audio recording fallback.");
+                        setMicErrorMessage("Audio recording active. Speak your answer freely and click Finish Speaking when done — AI will transcribe it instantly!");
+                    } else if (event.error === 'not-allowed') {
+                        setMicErrorMessage("Microphone permission denied in browser settings.");
+                        setIsListeningMic(false);
+                        isListeningMicRef.current = false;
+                    }
+                };
+
+                recognition.onend = () => {
+                    if (isListeningMicRef.current) {
+                        try {
+                            recognition.start();
+                        } catch (restartErr) {
+                            console.log("Recognition restart note:", restartErr);
+                        }
+                    }
+                };
+
+                recognitionRef.current = recognition;
+                recognition.start();
+            } catch (initErr) {
+                console.warn("SpeechRecognition init notice, falling back to MediaRecorder:", initErr);
+            }
+        }
     };
 
     // 7. Complete & Evaluate Interview
@@ -370,7 +570,9 @@ const MockInterviewRoom = () => {
     if (loadingSession) {
         return (
             <div className="session-loading card animate-fade-in">
-                <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                <div className="loading-flow-wrapper">
+                    <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                </div>
                 <h3>Loading Interview Session...</h3>
             </div>
         );
@@ -666,16 +868,52 @@ const MockInterviewRoom = () => {
                         <div className="input-mode-toggles">
                             <button
                                 type="button"
-                                className={`btn-mic-toggle ${isListeningMic ? 'listening' : ''}`}
+                                className={`btn-mic-toggle ${isListeningMic ? 'listening' : ''} ${isTranscribingAudio ? 'transcribing' : ''}`}
                                 onClick={handleToggleMic}
+                                disabled={isTranscribingAudio}
                             >
                                 <span className="material-symbols-outlined">
-                                    {isListeningMic ? 'mic' : 'mic_none'}
+                                    {isTranscribingAudio ? 'sync' : isListeningMic ? 'mic' : 'mic_none'}
                                 </span>
-                                <span>{isListeningMic ? 'Listening (Speak now)...' : 'Use Voice Input'}</span>
+                                <span>
+                                    {isTranscribingAudio ? 'AI Transcribing...' : isListeningMic ? 'Finish Speaking (Click to Save)' : 'Use Voice Input'}
+                                </span>
                             </button>
                         </div>
                     </div>
+
+                    {isTranscribingAudio && (
+                        <div className="audio-transcribing-banner animate-fade-in">
+                            <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                            <span>Transcribing your voice audio with Gemini AI... please wait a moment.</span>
+                        </div>
+                    )}
+
+                    {micErrorMessage && (
+                        <div className="mic-error-banner animate-fade-in">
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>warning</span>
+                            <span className="error-text">{micErrorMessage}</span>
+                            <button type="button" onClick={() => setMicErrorMessage('')} className="btn-dismiss-error">✕</button>
+                        </div>
+                    )}
+
+                    {isListeningMic && (
+                        <div className="live-speech-status-banner animate-fade-in">
+                            <div className="mic-wave-pulse">
+                                <span className="dot dot-1"></span>
+                                <span className="dot dot-2"></span>
+                                <span className="dot dot-3"></span>
+                            </div>
+                            <div className="live-speech-content">
+                                <span className="live-tag">TRANSCRIBING:</span>
+                                {interimTranscript ? (
+                                    <span className="interim-text">"{interimTranscript}"</span>
+                                ) : (
+                                    <span className="listening-prompt">Listening... speak your answer clearly and words will stream in real time.</span>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     <textarea
                         className="answer-textarea"
@@ -746,7 +984,9 @@ const MockInterviewRoom = () => {
             {isSubmittingEval && (
                 <div className="eval-loading-overlay">
                     <div className="eval-loading-modal card">
-                        <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                        <div className="loading-flow-wrapper">
+                            <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                        </div>
                         <h3>Evaluating Your Interview</h3>
                         <p>The AI Hiring Committee is reviewing technical precision, STAR behavioral depth, and communication clarity...</p>
                         <span className="timer-hint">Takes ~15-20 seconds. Please do not close this window.</span>

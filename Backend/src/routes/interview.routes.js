@@ -9,7 +9,8 @@ import {
     saveMockInterviewProgressController,
     evaluateMockInterviewController,
     getMockInterviewSessionController,
-    getAllMockSessionsController
+    getAllMockSessionsController,
+    transcribeVoiceController
 } from '../controllers/interview.controller.js';
 import { upload } from '../middlewares/file.middleware.js';
 
@@ -17,6 +18,9 @@ const interviewRouter = Router();
 
 // Protect all interview routes
 interviewRouter.use(authUser);
+
+// Voice Transcription (AI Fallback for Speech-to-Text)
+interviewRouter.post('/transcribe-voice', transcribeVoiceController);
 
 // Report Generation & Management
 interviewRouter.post('/', upload.single("resume"), generateInterviewReportController);

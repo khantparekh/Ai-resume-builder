@@ -45,29 +45,40 @@
     }
   }
 
-  /* Stats Grid */
-  .stats-grid {
+  /* Unified Executive Metrics Panel */
+  .stats-unified-bar {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(4, 1fr);
+    background: #ffffff;
+    border: 1px solid var(--outline-variant);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
 
-    .stat-card {
-      background: var(--surface-card);
-      border: 1px solid var(--outline-variant);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem;
+    .stat-cell {
+      padding: 1.25rem 1.5rem;
       display: flex;
       align-items: center;
       gap: 1rem;
-      box-shadow: var(--shadow-sm);
+      transition: background-color 0.2s ease;
+      position: relative;
+
+      &:not(:last-child) {
+        border-right: 1px solid var(--outline-variant);
+      }
+
+      &:hover {
+        background-color: var(--surface-container-low);
+      }
 
       .stat-icon-wrapper {
-        width: 48px;
-        height: 48px;
+        width: 44px;
+        height: 44px;
         border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
 
         &.primary-icon {
           background-color: var(--surface-container-high);
@@ -105,42 +116,67 @@
         .stat-label {
           font-size: 0.8rem;
           color: var(--on-surface-variant);
+          white-space: nowrap;
         }
       }
     }
   }
 
-  /* Feature Action Cards */
-  .feature-cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+  /* Connected Career Workflow Pipeline */
+  .workflow-pipeline-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
 
-    .feature-card {
-      background: var(--surface-card);
-      border: 1px solid var(--outline-variant);
-      border-radius: var(--radius-xl);
-      padding: 1.75rem;
-      cursor: pointer;
+    .pipeline-header {
       display: flex;
-      flex-direction: column;
-      position: relative;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
+      align-items: baseline;
+      gap: 0.75rem;
+      padding-left: 0.25rem;
 
-      &:hover {
-        transform: translateY(-3px);
-        box-shadow: var(--shadow-lg);
-        border-color: var(--secondary);
+      .pipeline-tag {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--secondary);
+        letter-spacing: 0.05em;
+      }
 
-        .feature-cta {
-          color: var(--secondary);
+      .pipeline-sub {
+        font-size: 0.85rem;
+        color: var(--on-surface-variant);
+      }
+    }
 
-          .material-symbols-outlined {
-            transform: translateX(4px);
+    .feature-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+
+      .feature-card {
+        background: var(--surface-card);
+        border: 1px solid var(--outline-variant);
+        border-radius: var(--radius-xl);
+        padding: 1.75rem;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+        &:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--shadow-lg);
+          border-color: var(--secondary);
+
+          .feature-cta {
+            color: var(--secondary);
+
+            .material-symbols-outlined {
+              transform: translateX(4px);
+            }
           }
         }
-      }
 
       .feature-badge {
         position: absolute;
@@ -208,6 +244,7 @@
       }
     }
   }
+}
 
   /* Section Block */
   .section-block {
@@ -401,12 +438,51 @@
   }
 }
 
+@media (max-width: 960px) {
+  .dashboard-page {
+    .stats-unified-bar {
+      grid-template-columns: repeat(2, 1fr);
+
+      .stat-cell:nth-child(2) {
+        border-right: none;
+      }
+
+      .stat-cell:nth-child(-n+2) {
+        border-bottom: 1px solid var(--outline-variant);
+      }
+    }
+
+    .workflow-pipeline-section {
+      .feature-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-page {
     .dashboard-hero {
       flex-direction: column;
       align-items: flex-start;
       padding: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 580px) {
+  .dashboard-page {
+    .stats-unified-bar {
+      grid-template-columns: 1fr;
+
+      .stat-cell {
+        border-right: none !important;
+        border-bottom: 1px solid var(--outline-variant);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
     }
   }
 }

@@ -258,3 +258,104 @@ h1, h2, h3, h4, h5, h6 {
 .animate-pulse-glow {
   animation: pulseGlow 2s infinite ease-in-out;
 }
+
+/* Fluid Continuous Circular Spin Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin,
+.icon-spin {
+  display: inline-block !important;
+  animation: spin 0.9s linear infinite !important;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Flowing circular SVG ring loader */
+@keyframes spinFlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spinDash {
+  0% {
+    stroke-dashoffset: 130;
+    transform: rotate(0deg);
+  }
+  50% {
+    stroke-dashoffset: 30;
+    transform: rotate(180deg);
+  }
+  100% {
+    stroke-dashoffset: 130;
+    transform: rotate(360deg);
+  }
+}
+
+.circular-flow-ring {
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    animation: spinFlow 1.5s linear infinite;
+    transform-origin: center center;
+
+    circle.track {
+      stroke: var(--surface-container);
+      stroke-width: 4;
+      fill: none;
+    }
+
+    circle.flow {
+      stroke: var(--secondary);
+      stroke-width: 4;
+      stroke-linecap: round;
+      fill: none;
+      stroke-dasharray: 140;
+      animation: spinDash 1.4s ease-in-out infinite;
+      transform-origin: center center;
+    }
+  }
+
+  .flow-icon {
+    position: absolute;
+    color: var(--secondary);
+    font-size: 24px;
+  }
+}
+
+.loading-flow-wrapper {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--surface-card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0, 106, 97, 0.1);
+  border: 4px solid var(--surface-container);
+  border-top-color: var(--secondary);
+  border-right-color: var(--secondary-light);
+  animation: spin 1s cubic-bezier(0.4, 0.1, 0.4, 0.9) infinite;
+  margin: 0 auto;
+
+  .material-symbols-outlined {
+    font-size: 30px;
+    color: var(--secondary);
+    animation: spin 1.2s linear infinite;
+  }
+}
+

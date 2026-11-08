@@ -40,7 +40,9 @@ const AnalysisReport = () => {
     if (loading) {
         return (
             <div className="report-loading animate-fade-in">
-                <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                <div className="loading-flow-wrapper">
+                    <span className="material-symbols-outlined animate-spin icon-spin">progress_activity</span>
+                </div>
                 <h3>Loading Analysis Report...</h3>
             </div>
         );
@@ -85,6 +87,13 @@ const AnalysisReport = () => {
                     </button>
                     <button
                         className="btn btn-primary btn-sm"
+                        onClick={() => navigate(`/ats-studio?reportId=${report._id}&tab=export`)}
+                    >
+                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>picture_as_pdf</span>
+                        <span>Export Resume PDF</span>
+                    </button>
+                    <button
+                        className="btn btn-outline btn-sm"
                         onClick={() => navigate(`/mock-interview?reportId=${report._id}`)}
                     >
                         <span className="material-symbols-outlined filled" style={{ fontSize: '18px' }}>mic</span>

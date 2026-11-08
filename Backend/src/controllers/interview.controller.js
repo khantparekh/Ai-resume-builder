@@ -7,7 +7,8 @@ import { PDFParse } from 'pdf-parse';
 import {
     generateInterviewReport,
     generateMockInterviewQuestions,
-    evaluateInterviewPerformance
+    evaluateInterviewPerformance,
+    transcribeCandidateAudio
 } from '../services/ai.service.js';
 
 /**
@@ -322,6 +323,27 @@ const getAllMockSessionsController = asyncHandler(async (req, res) => {
     ));
 });
 
+/**
+ * @name transcribeVoiceController
+ * @description Transcribes candidate audio recording using Gemini AI
+ * @access private
+ */
+const transcribeVoiceController = asyncHandler(async (req, res) => {
+    const { audioBase64, mimeType = 'audio/webm' } = req.body;
+
+    if (!audioBase64) {
+        throw new ApiError(400, "Audio data is required for transcription");
+    }
+
+    const transcript = await transcribeCandidateAudio({ audioBase64, mimeType });
+
+    return res.status(200).json(new ApiResponse(
+        200,
+        { transcript },
+        "Audio transcribed successfully"
+    ));
+});
+
 export {
     generateInterviewReportController,
     getAllReportsController,
@@ -331,5 +353,6 @@ export {
     saveMockInterviewProgressController,
     evaluateMockInterviewController,
     getMockInterviewSessionController,
-    getAllMockSessionsController
+    getAllMockSessionsController,
+    transcribeVoiceController
 };

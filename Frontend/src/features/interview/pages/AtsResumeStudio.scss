@@ -20,6 +20,38 @@
       font-size: 0.95rem;
     }
 
+    .top-bar-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-one-button-export-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.6rem 1.15rem;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 3px 10px rgba(0, 106, 97, 0.2);
+      transition: all 0.2s ease;
+
+      .material-symbols-outlined {
+        font-size: 18px;
+      }
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(0, 106, 97, 0.3);
+      }
+    }
+
     .report-selector-wrapper {
       display: flex;
       align-items: center;
@@ -171,6 +203,28 @@
         font-size: 19px;
       }
 
+      &.tab-export-highlight {
+        color: var(--secondary);
+        font-weight: 700;
+
+        .material-symbols-outlined {
+          color: var(--secondary);
+        }
+
+        &:hover {
+          background-color: rgba(0, 106, 97, 0.08);
+        }
+
+        &.active {
+          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+          color: #ffffff;
+
+          .material-symbols-outlined {
+            color: #ffffff;
+          }
+        }
+      }
+
       &:hover {
         color: var(--primary);
         background-color: var(--surface-card);
@@ -264,7 +318,29 @@
           cursor: pointer;
           transition: all 0.15s;
 
-          &:hover {
+          &.tab-export-highlight {
+        color: var(--secondary);
+        font-weight: 700;
+
+        .material-symbols-outlined {
+          color: var(--secondary);
+        }
+
+        &:hover {
+          background-color: rgba(0, 106, 97, 0.08);
+        }
+
+        &.active {
+          background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+          color: #ffffff;
+
+          .material-symbols-outlined {
+            color: #ffffff;
+          }
+        }
+      }
+
+      &:hover {
             background-color: var(--secondary-container);
             color: var(--on-secondary-container);
             border-color: transparent;

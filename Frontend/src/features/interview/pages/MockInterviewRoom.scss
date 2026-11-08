@@ -357,7 +357,115 @@
             background-color: var(--error-container);
             color: var(--on-error-container);
             border-color: var(--error);
-            animation: pulseGlow 1.2s infinite;
+            box-shadow: 0 0 12px rgba(186, 26, 26, 0.25);
+          }
+        }
+      }
+
+      .audio-transcribing-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        padding: 0.65rem 1rem;
+        background-color: var(--secondary-container);
+        color: var(--on-secondary-container);
+        border: 1px solid rgba(0, 106, 97, 0.25);
+        border-radius: var(--radius-md);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+
+        .icon-spin {
+          font-size: 20px;
+          color: var(--on-secondary-container);
+        }
+      }
+
+      .mic-error-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.65rem 1rem;
+        background-color: var(--error-container);
+        color: var(--on-error-container);
+        border: 1px solid rgba(186, 26, 26, 0.2);
+        border-radius: var(--radius-md);
+        font-size: 0.825rem;
+        margin-bottom: 0.75rem;
+
+        .error-text {
+          flex: 1;
+          line-height: 1.4;
+        }
+
+        .btn-dismiss-error {
+          background: none;
+          border: none;
+          font-size: 1.1rem;
+          cursor: pointer;
+          color: var(--on-error-container);
+          padding: 0 0.3rem;
+          line-height: 1;
+          opacity: 0.7;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+
+      .live-speech-status-banner {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.65rem 1rem;
+        background-color: rgba(0, 106, 97, 0.08);
+        border: 1px solid rgba(0, 106, 97, 0.25);
+        border-radius: var(--radius-md);
+        margin-bottom: 0.75rem;
+
+        .mic-wave-pulse {
+          display: flex;
+          align-items: center;
+          gap: 3px;
+
+          .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            animation: pulseGlow 1s infinite alternate ease-in-out;
+
+            &.dot-2 {
+              animation-delay: 0.2s;
+            }
+
+            &.dot-3 {
+              animation-delay: 0.4s;
+            }
+          }
+        }
+
+        .live-speech-content {
+          font-size: 0.85rem;
+          line-height: 1.4;
+
+          .live-tag {
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: var(--secondary);
+            letter-spacing: 0.04em;
+            margin-right: 0.4rem;
+          }
+
+          .interim-text {
+            color: var(--on-surface);
+            font-weight: 500;
+            font-style: italic;
+          }
+
+          .listening-prompt {
+            color: var(--on-surface-variant);
           }
         }
       }

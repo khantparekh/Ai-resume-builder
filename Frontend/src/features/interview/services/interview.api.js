@@ -98,3 +98,11 @@ export const evaluateMockInterview = async (sessionId, answers) => {
     const response = await api.post(`/interview/mock/${sessionId}/evaluate`, { answers });
     return response.data;
 };
+
+/**
+ * Transcribe recorded candidate voice audio using backend AI
+ */
+export const transcribeVoiceApi = async ({ audioBase64, mimeType = 'audio/webm' }) => {
+    const response = await api.post('/interview/transcribe-voice', { audioBase64, mimeType });
+    return response.data;
+};

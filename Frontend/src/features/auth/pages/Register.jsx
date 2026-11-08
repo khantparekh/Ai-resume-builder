@@ -96,7 +96,7 @@ const Register = () => {
                     >
                         {submitting ? (
                             <>
-                                <span className="material-symbols-outlined">progress_activity</span>
+                                <span className="material-symbols-outlined animate-spin">progress_activity</span>
                                 Creating Account...
                             </>
                         ) : (

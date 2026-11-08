@@ -73,9 +73,9 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Quick Stats Grid */}
-            <div className="stats-grid">
-                <div className="stat-card">
+            {/* Unified Executive Metrics Panel */}
+            <div className="stats-unified-bar card">
+                <div className="stat-cell">
                     <div className="stat-icon-wrapper primary-icon">
                         <span className="material-symbols-outlined">analytics</span>
                     </div>
@@ -85,7 +85,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-cell">
                     <div className="stat-icon-wrapper secondary-icon">
                         <span className="material-symbols-outlined">stars</span>
                     </div>
@@ -95,7 +95,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-cell">
                     <div className="stat-icon-wrapper interview-icon">
                         <span className="material-symbols-outlined">record_voice_over</span>
                     </div>
@@ -105,7 +105,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className="stat-card">
+                <div className="stat-cell">
                     <div className="stat-icon-wrapper ats-icon">
                         <span className="material-symbols-outlined">auto_awesome</span>
                     </div>
@@ -116,44 +116,51 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Quick Action Feature Cards */}
-            <div className="feature-cards-grid">
-                <div className="feature-card" onClick={() => navigate('/setup')}>
-                    <div className="feature-badge">Scan & Match</div>
-                    <div className="feature-icon">
-                        <span className="material-symbols-outlined filled">upload_file</span>
-                    </div>
-                    <h3>Resume vs JD Matcher</h3>
-                    <p>Compare resume with target job descriptions to identify exact skill gaps and high-yield interview questions.</p>
-                    <div className="feature-cta">
-                        <span>Start Scan</span>
-                        <span className="material-symbols-outlined">arrow_forward</span>
-                    </div>
+            {/* Connected Career Workflow Pipeline */}
+            <div className="workflow-pipeline-section">
+                <div className="pipeline-header">
+                    <span className="pipeline-tag">END-TO-END CAREER PIPELINE</span>
+                    <span className="pipeline-sub">3 connected stages to prepare, optimize, and land your target role</span>
                 </div>
 
-                <div className="feature-card" onClick={() => navigate('/ats-studio')}>
-                    <div className="feature-badge">ATS Optimizer</div>
-                    <div className="feature-icon ats-bg">
-                        <span className="material-symbols-outlined filled">document_scanner</span>
+                <div className="feature-cards-grid">
+                    <div className="feature-card" onClick={() => navigate('/setup')}>
+                        <div className="feature-badge">01 • Scan & Match</div>
+                        <div className="feature-icon">
+                            <span className="material-symbols-outlined filled">upload_file</span>
+                        </div>
+                        <h3>Resume vs JD Matcher</h3>
+                        <p>Compare resume with target job descriptions to identify exact skill gaps and high-yield interview questions.</p>
+                        <div className="feature-cta">
+                            <span>Start Scan</span>
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </div>
                     </div>
-                    <h3>ATS Resume Studio</h3>
-                    <p>Get keyword additions, metric-focused bullet points, and an updated ATS-compliant resume markdown draft.</p>
-                    <div className="feature-cta">
-                        <span>Optimize Resume</span>
-                        <span className="material-symbols-outlined">arrow_forward</span>
-                    </div>
-                </div>
 
-                <div className="feature-card" onClick={() => navigate('/mock-interview')}>
-                    <div className="feature-badge">AI Simulator</div>
-                    <div className="feature-icon interview-bg">
-                        <span className="material-symbols-outlined filled">mic</span>
+                    <div className="feature-card" onClick={() => navigate('/ats-studio')}>
+                        <div className="feature-badge">02 • ATS Optimizer</div>
+                        <div className="feature-icon ats-bg">
+                            <span className="material-symbols-outlined filled">document_scanner</span>
+                        </div>
+                        <h3>ATS Resume Studio</h3>
+                        <p>Get keyword additions, metric-focused bullet points, and export an ATS-compliant resume in 1 click.</p>
+                        <div className="feature-cta">
+                            <span>Optimize Resume</span>
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </div>
                     </div>
-                    <h3>AI Mock Interview</h3>
-                    <p>Practice technical, resume-based, and behavioral questions with instant speech input and deep AI performance scoring.</p>
-                    <div className="feature-cta">
-                        <span>Launch Interview</span>
-                        <span className="material-symbols-outlined">arrow_forward</span>
+
+                    <div className="feature-card" onClick={() => navigate('/mock-interview')}>
+                        <div className="feature-badge">03 • AI Simulator</div>
+                        <div className="feature-icon interview-bg">
+                            <span className="material-symbols-outlined filled">mic</span>
+                        </div>
+                        <h3>AI Mock Interview</h3>
+                        <p>Practice technical, resume-based, and behavioral questions with voice input and deep AI performance scoring.</p>
+                        <div className="feature-cta">
+                            <span>Launch Interview</span>
+                            <span className="material-symbols-outlined">arrow_forward</span>
+                        </div>
                     </div>
                 </div>
             </div>
