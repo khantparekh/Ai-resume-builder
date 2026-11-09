@@ -97,7 +97,14 @@ const loginUserController = asyncHandler(async (req, res) => {
         }
     );
 
-    res.cookie("token", token);
+    const options = {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+        maxAge: 24 * 60 * 60 * 1000 
+    }
+
+    res.cookie("token", token, options);
 
     return res
     .status(200)
