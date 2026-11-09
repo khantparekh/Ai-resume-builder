@@ -51,7 +51,7 @@ CareerCompat AI is an intelligent full-stack career platform that bridges the ga
   - Category breakdown (Technical, Communication, Behavioral)
   - Hiring verdict badge
   - Exemplar model answers
-- **Speech-to-Text** voice answering for hands-free practice *(in progress)*.
+- **Speech-to-Text** User can speak the answer and it will be transcribe to the text, So that interview performance and communication will become better by practicing the question using this feature.
 ---
  
 ## Tech Stack
@@ -166,8 +166,8 @@ GEMINI_API_KEY=your_google_gemini_api_key
 - [x] ATS Resume Studio with Markdown export
 - [x] AI mock interview with scoring and model answers
 - [x] Text-to-Speech question playback
-- [ ] Speech-to-Text voice answers
-- [ ] PDF export of the optimized resume
+- [x] Speech-to-Text voice answers
+- [x] PDF export of the optimized resume
 ---
  
 ## Author
