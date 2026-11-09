@@ -86,7 +86,7 @@ const LandingPage = () => {
                             </button>
                         </div>
 
-                        <div className="hero-stats-row">
+                        <div className="hero-stats-row" style={{display: "none"}}>
                             <div className="stat-item">
                                 <span className="stat-value">98%</span>
                                 <span className="stat-label">ATS Parse Rate</span>
@@ -151,7 +151,7 @@ const LandingPage = () => {
             </section>
 
             {/* Social Proof Bar */}
-            <section className="proof-bar-section">
+            <section className="proof-bar-section" style={{display: "none"}}>
                 <div className="proof-container">
                     <p className="proof-title">Trusted by ambitious candidates applying to world-class teams</p>
                     <div className="proof-logos">
@@ -330,7 +330,7 @@ const LandingPage = () => {
                         </div>
                         <span className="footer-brand-title">CareerCompat AI</span>
                     </div>
-                    <p className="footer-copy">© {new Date().getFullYear()} CareerCompat AI. Precision career intelligence powered by Gemini.</p>
+                    <p className="footer-copy">© {new Date().getFullYear()} CareerCompat AI. Precision career intelligence, built for your future.</p>
                     <div className="footer-links">
                         <Link to="/login">Sign In</Link>
                         <Link to="/register">Create Account</Link>

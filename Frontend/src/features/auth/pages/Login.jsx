@@ -34,9 +34,11 @@ const Login = () => {
         <div className="auth-page">
             <div className="auth-card">
                 <div className="brand-header">
-                    <div className="brand-icon">
-                        <span className="material-symbols-outlined filled">insights</span>
-                    </div>
+                    <Link to='/' style={{ textDecoration: "none" }}>
+                        <div className="brand-icon">
+                            <span className="material-symbols-outlined filled">insights</span>
+                        </div>
+                    </Link>
                     <h1>CareerCompat AI</h1>
                     <p>Sign in to access your resume analytics & AI mock interviews</p>
                 </div>

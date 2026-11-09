@@ -13,7 +13,7 @@ export const useAuth = () => {
             const response = await login({email, password});
             setUser(response.data);
         } catch (error) {
-            
+            throw error;
         }finally{
             setLoading(false);
         }
@@ -25,7 +25,7 @@ export const useAuth = () => {
             const response = await register({username, email, password});
             setUser(response.data);
         } catch (error) {
-            
+            throw error;
         }finally{
             setLoading(false);
         }
@@ -37,7 +37,7 @@ export const useAuth = () => {
             const response = await logout();
             setUser(null);
         } catch (error) {
-            
+            throw error;
         }finally{
             setLoading(false);
         }
@@ -50,7 +50,7 @@ export const useAuth = () => {
                 const response = await currentUser();
                 setUser(response.data);
             } catch (error) {
-                
+                throw error;
             }finally{
                 setLoading(false);
             }
