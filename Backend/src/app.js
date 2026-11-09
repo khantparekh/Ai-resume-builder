@@ -25,6 +25,15 @@ app.use(cors({
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+app.get('/api/ping', (req, res) => {
+  res.json({
+    status:    'ok',
+    message:   'Server reachable ✅',
+    timestamp: new Date().toISOString(),
+    clientUrl: process.env.CLIENT_URL,
+  });
+});
+
 //auth routes
 import authRouter from "./routes/auth.routes.js";
 app.use('/api/v1/auth', authRouter);
