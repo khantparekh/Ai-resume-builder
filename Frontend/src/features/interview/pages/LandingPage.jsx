@@ -305,7 +305,7 @@ const LandingPage = () => {
             </section>
 
             {/* Bottom Call to Action Banner */}
-            <section className="cta-banner-section">
+            <section id="ats-studio" className="cta-banner-section">
                 <div className="cta-banner-card card">
                     <h2>Ready to Land Your Dream Role?</h2>
                     <p>Stop guessing why recruiters pass on your application. Get data-backed precision today.</p>
